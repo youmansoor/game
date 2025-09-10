@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>404: ERROR - Desktop</title>
+  <meta charset="UTF-8" />
+  <title>404: ERROR - Desktop (Mobile Friendly)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body {
       margin: 0;
@@ -10,6 +11,7 @@
       font-family: 'Segoe UI', Tahoma, sans-serif;
       overflow: hidden;
       color: white;
+      touch-action: none; /* Important to prevent default touch scroll on drag */
     }
 
     #desktop {
@@ -19,29 +21,38 @@
     }
 
     .icon {
-      width: 80px;
+      width: 60px;
       text-align: center;
       cursor: pointer;
       margin: 10px;
       position: absolute;
       user-select: none;
+      font-size: 0.8rem;
+      line-height: 1.2;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .icon img {
-      width: 48px;
-      height: 48px;
+      width: 40px;
+      height: 40px;
+      pointer-events: none; /* So dragging the icon doesn’t get stuck on image */
+      user-select: none;
     }
 
     .window {
       position: absolute;
-      width: 300px;
-      height: 200px;
+      width: 280px;
+      max-width: 90vw;
+      height: 180px;
       background: #222;
       border: 2px solid #0ff;
       color: white;
       z-index: 999;
       padding: 10px;
       display: none;
+      box-sizing: border-box;
+      border-radius: 8px;
+      touch-action: none; /* Prevent scroll during drag */
     }
 
     .window-header {
@@ -49,6 +60,8 @@
       background: #003344;
       padding: 5px;
       cursor: move;
+      user-select: none;
+      border-radius: 5px 5px 0 0;
     }
 
     #revealMessage {
@@ -56,57 +69,78 @@
       bottom: 20px;
       left: 50%;
       transform: translateX(-50%);
-      font-size: 1.4rem;
+      font-size: 1.2rem;
       display: none;
+      text-align: center;
+      padding: 0 10px;
+    }
+
+    /* Position icons in a more responsive way */
+    #iconDoNotClick { top: 5vh; left: 5vw; }
+    #iconSecrets { top: 5vh; left: 25vw; }
+    #iconGameFile { top: 5vh; left: 45vw; }
+    #iconRecycleBin { bottom: 5vh; right: 5vw; }
+
+    /* Desktop hint */
+    #desktopHint {
+      position: absolute;
+      bottom: 80px;
+      right: 50px;
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.3);
+      user-select: none;
+      pointer-events: none;
+      max-width: 200px;
+      text-align: center;
+      font-style: italic;
+      line-height: 1.3;
+    }
+
+    /* Make hint reposition on smaller widths */
+    @media (max-width: 400px) {
+      #desktopHint {
+        right: 10px;
+        bottom: 70px;
+        max-width: 140px;
+        font-size: 0.8rem;
+      }
     }
   </style>
 </head>
 <body>
 
 <div id="desktop">
-  <div class="icon" id="iconDoNotClick" style="top: 30px; left: 30px;">
-    <img src="https://img.icons8.com/emoji/48/000000/cross-mark-emoji.png"/>
+  <div class="icon" id="iconDoNotClick">
+    <img src="https://img.icons8.com/emoji/48/000000/cross-mark-emoji.png" alt="Do Not Click" />
     <div>DO_NOT_CLICK</div>
   </div>
 
-  <div class="icon" id="iconSecrets" style="top: 30px; left: 130px;">
-    <img src="https://img.icons8.com/emoji/48/000000/file-folder-emoji.png"/>
+  <div class="icon" id="iconSecrets">
+    <img src="https://img.icons8.com/emoji/48/000000/file-folder-emoji.png" alt="My Secrets" />
     <div>My Secrets</div>
   </div>
 
   <div class="icon" id="iconGameFile" draggable="true" title="Try dragging me somewhere...">
-  <img src="https://img.icons8.com/emoji/48/000000/floppy-disk-emoji.png"/>
-  <div>game.exe</div>
-</div>
+    <img src="https://img.icons8.com/emoji/48/000000/floppy-disk-emoji.png" alt="game.exe" />
+    <div>game.exe</div>
+  </div>
 
-
-  <div class="icon" id="iconRecycleBin" style="bottom: 30px; right: 30px;">
-    <img src="https://img.icons8.com/emoji/48/000000/wastebasket-emoji.png"/>
+  <div class="icon" id="iconRecycleBin">
+    <img src="https://img.icons8.com/emoji/48/000000/wastebasket-emoji.png" alt="Recycle Bin" />
     <div>Recycle Bin</div>
   </div>
-  <!-- Add this subtle hint near recycle bin inside #desktop -->
-<div id="desktopHint" style="
-  position: absolute;
-  bottom: 80px;
-  right: 50px;
-  font-size: 0.9rem;
-  color: rgba(255,255,255,0.3);
-  user-select: none;
-  pointer-events: none;
-  max-width: 200px;
-  text-align: center;
-  font-style: italic;
-">
-  Sometimes throwing things away reveals secrets...
-</div>
 
+  <!-- Desktop hint -->
+  <div id="desktopHint">
+    Sometimes throwing things away reveals secrets...
+  </div>
 
-  <div class="window" id="windowSecrets" style="top: 150px; left: 200px;">
+  <div class="window" id="windowSecrets" style="top: 30vh; left: 15vw;">
     <div class="window-header">My Secrets</div>
     <div style="padding: 10px;">Totally not the password: <b>UNLOCK</b><br>Ignore this.</div>
   </div>
 
-  <div class="window" id="windowWarning" style="top: 100px; left: 100px;">
+  <div class="window" id="windowWarning" style="top: 20vh; left: 10vw;">
     <div class="window-header">⚠ WARNING</div>
     <div style="padding: 10px;">I said DO NOT click that. Now look what you've done!</div>
   </div>
@@ -117,88 +151,168 @@
 <script>
   const synth = window.speechSynthesis;
 
-function speak(text) {
-  const msg = new SpeechSynthesisUtterance(text);
-  msg.rate = 1;
-  msg.pitch = 1;
-  synth.speak(msg);
-}
-
-const iconDoNotClick = document.getElementById('iconDoNotClick');
-const iconSecrets = document.getElementById('iconSecrets');
-const iconGameFile = document.getElementById('iconGameFile');
-const iconRecycleBin = document.getElementById('iconRecycleBin');
-
-const windowSecrets = document.getElementById('windowSecrets');
-const windowWarning = document.getElementById('windowWarning');
-const revealMessage = document.getElementById('revealMessage');
-
-iconDoNotClick.addEventListener('click', () => {
-  speak("Seriously? You clicked the file labeled do not click?");
-  windowWarning.style.display = 'block';
-});
-
-iconSecrets.addEventListener('click', () => {
-  speak("Nothing to see here. Just boring secrets.");
-  windowSecrets.style.display = 'block';
-});
-
-iconGameFile.addEventListener('dragstart', (e) => {
-  e.dataTransfer.setData("text/plain", "gameFile");
-});
-
-iconRecycleBin.addEventListener('dragover', (e) => {
-  e.preventDefault();
-});
-
-iconRecycleBin.addEventListener('drop', (e) => {
-  const data = e.dataTransfer.getData("text/plain");
-  if (data === "gameFile") {
-    speak("You really threw away the game? What have you done?");
-    revealMessage.style.display = 'block';
-    setTimeout(() => {
-      window.location.href = "scene3.html"; // move to next scene
-    }, 3000);
+  function speak(text) {
+    const msg = new SpeechSynthesisUtterance(text);
+    msg.rate = 1;
+    msg.pitch = 1;
+    synth.speak(msg);
   }
-});
 
-// Make windows draggable
-function makeDraggable(winElement, headerClass = '.window-header') {
-  const header = winElement.querySelector(headerClass);
-  let offsetX, offsetY, isDragging = false;
+  const iconDoNotClick = document.getElementById('iconDoNotClick');
+  const iconSecrets = document.getElementById('iconSecrets');
+  const iconGameFile = document.getElementById('iconGameFile');
+  const iconRecycleBin = document.getElementById('iconRecycleBin');
 
-  header.addEventListener('mousedown', (e) => {
-    isDragging = true;
-    offsetX = e.clientX - winElement.offsetLeft;
-    offsetY = e.clientY - winElement.offsetTop;
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseup', onMouseUp);
+  const windowSecrets = document.getElementById('windowSecrets');
+  const windowWarning = document.getElementById('windowWarning');
+  const revealMessage = document.getElementById('revealMessage');
+
+  iconDoNotClick.addEventListener('click', () => {
+    speak("Seriously? You clicked the file labeled do not click?");
+    windowWarning.style.display = 'block';
   });
 
-  function onMouseMove(e) {
-    if (isDragging) {
-      winElement.style.left = `${e.clientX - offsetX}px`;
-      winElement.style.top = `${e.clientY - offsetY}px`;
+  iconSecrets.addEventListener('click', () => {
+    speak("Nothing to see here. Just boring secrets.");
+    windowSecrets.style.display = 'block';
+  });
+
+  // Drag and drop functionality, including touch support for mobile
+  // Touch dragging for iconGameFile
+  let dragging = false;
+  let dragOffsetX = 0;
+  let dragOffsetY = 0;
+
+  iconGameFile.addEventListener('dragstart', (e) => {
+    e.dataTransfer.setData("text/plain", "gameFile");
+  });
+
+  // Touch events for dragging the iconGameFile
+  iconGameFile.addEventListener('touchstart', (e) => {
+    dragging = true;
+    const touch = e.touches[0];
+    const rect = iconGameFile.getBoundingClientRect();
+    dragOffsetX = touch.clientX - rect.left;
+    dragOffsetY = touch.clientY - rect.top;
+    e.preventDefault();
+  });
+
+  document.addEventListener('touchmove', (e) => {
+    if (!dragging) return;
+    const touch = e.touches[0];
+    let x = touch.clientX - dragOffsetX;
+    let y = touch.clientY - dragOffsetY;
+
+    // Keep inside viewport
+    x = Math.min(window.innerWidth - iconGameFile.offsetWidth, Math.max(0, x));
+    y = Math.min(window.innerHeight - iconGameFile.offsetHeight, Math.max(0, y));
+
+    iconGameFile.style.left = x + 'px';
+    iconGameFile.style.top = y + 'px';
+  }, { passive: false });
+
+  document.addEventListener('touchend', (e) => {
+    if (!dragging) return;
+    dragging = false;
+
+    // Check if dropped over recycle bin
+    const recycleRect = iconRecycleBin.getBoundingClientRect();
+    const iconRect = iconGameFile.getBoundingClientRect();
+
+    const overlap = !(iconRect.right < recycleRect.left ||
+                      iconRect.left > recycleRect.right ||
+                      iconRect.bottom < recycleRect.top ||
+                      iconRect.top > recycleRect.bottom);
+
+    if (overlap) {
+      speak("You really threw away the game? What have you done?");
+      revealMessage.style.display = 'block';
+      setTimeout(() => {
+        window.location.href = "scene3.html";
+      }, 3000);
+    } else {
+      // Reset position if not dropped on recycle bin
+      iconGameFile.style.left = '';
+      iconGameFile.style.top = '';
     }
+  });
+
+  // Also keep original drag/drop for desktop browsers
+  iconRecycleBin.addEventListener('dragover', (e) => {
+    e.preventDefault();
+  });
+
+  iconRecycleBin.addEventListener('drop', (e) => {
+    e.preventDefault();
+    const data = e.dataTransfer.getData("text/plain");
+    if (data === "gameFile") {
+      speak("You really threw away the game? What have you done?");
+      revealMessage.style.display = 'block';
+      setTimeout(() => {
+        window.location.href = "scene3.html";
+      }, 3000);
+    }
+  });
+
+  // Make windows draggable for desktop and touch
+  function makeDraggable(winElement, headerClass = '.window-header') {
+    const header = winElement.querySelector(headerClass);
+    let offsetX, offsetY, isDragging = false;
+
+    // Mouse events
+    header.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      offsetX = e.clientX - winElement.offsetLeft;
+      offsetY = e.clientY - winElement.offsetTop;
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
+      e.preventDefault();
+    });
+
+    function onMouseMove(e) {
+      if (isDragging) {
+        winElement.style.left = `${e.clientX - offsetX}px`;
+        winElement.style.top = `${e.clientY - offsetY}px`;
+      }
+    }
+
+    function onMouseUp() {
+      isDragging = false;
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    }
+
+    // Touch events
+    header.addEventListener('touchstart', (e) => {
+      isDragging = true;
+      const touch = e.touches[0];
+      offsetX = touch.clientX - winElement.offsetLeft;
+      offsetY = touch.clientY - winElement.offsetTop;
+      e.preventDefault();
+    });
+
+    header.addEventListener('touchmove', (e) => {
+      if (!isDragging) return;
+      const touch = e.touches[0];
+      winElement.style.left = `${touch.clientX - offsetX}px`;
+      winElement.style.top = `${touch.clientY - offsetY}px`;
+    }, { passive: false });
+
+    header.addEventListener('touchend', (e) => {
+      isDragging = false;
+    });
   }
 
-  function onMouseUp() {
-    isDragging = false;
-    document.removeEventListener('mousemove', onMouseMove);
-    document.removeEventListener('mouseup', onMouseUp);
-  }
-}
+  makeDraggable(windowSecrets);
+  makeDraggable(windowWarning);
 
-makeDraggable(windowSecrets);
-makeDraggable(windowWarning);
+  // Spoken hint after 5 seconds if warning not shown
+  setTimeout(() => {
+    if (!windowWarning.style.display || windowWarning.style.display === 'none') {
+      speak("Maybe try dragging something into the recycle bin...");
+    }
+  }, 5000);
 
-// *** New subtle hint code ***
-// After 5 seconds, give a spoken hint nudging the player
-setTimeout(() => {
-  if (!windowWarning.style.display || windowWarning.style.display === 'none') {
-    speak("Maybe try dragging something into the recycle bin...");
-  }
-}, 5000);
 </script>
 
 </body>
