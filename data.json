@@ -1,0 +1,44 @@
+{
+  "scenes": {
+    "intro": {
+      "text": "There is no game. Seriously. Do NOT click the button.",
+      "actions": {
+        "clickButton": "warning1"
+      }
+    },
+    "warning1": {
+      "text": "I told you not to click the button! Don't do it again!",
+      "actions": {
+        "clickButton": "warning2"
+      }
+    },
+    "warning2": {
+      "text": "Stop it! You're going to break everything! ...Oops.",
+      "actions": {
+        "clickButton": "broken"
+      }
+    },
+    "broken": {
+      "text": "You've broken the game! Try dragging the puzzle piece to fix it.",
+      "actions": {
+        "dragPuzzle": "puzzleSolved"
+      }
+    },
+    "puzzleSolved": {
+      "text": "Nice! You fixed it... or did you? Try clicking the glitchy button.",
+      "actions": {
+        "clickGlitchButton": "glitchButtonClicked"
+      }
+    },
+    "glitchButtonClicked": {
+      "text": "You clicked the glitchy button! Weird things are happening...",
+      "actions": {
+        "wait": "finalScene"
+      }
+    },
+    "finalScene": {
+      "text": "That's it! Or is it? Try closing this game.",
+      "actions": {}
+    }
+  }
+}

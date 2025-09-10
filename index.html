@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>There Is No Game - Mini Version</title>
+<style>
+  body {
+    background: #111;
+    color: #eee;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    user-select: none;
+    overflow-x: hidden;
+  }
+  h1 {
+    font-size: 3rem;
+    margin-bottom: 0;
+  }
+  #subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 40px;
+    color: #aaa;
+  }
+  #btnContainer {
+    display: flex;
+    gap: 20px;
+  }
+  button {
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    border: none;
+    border-radius: 8px;
+    background: #222;
+    color: #eee;
+    transition: background-color 0.3s ease;
+  }
+  button:hover {
+    background: #555;
+  }
+  #messageBox {
+    margin-top: 40px;
+    font-size: 1.5rem;
+    height: 2em;
+    min-width: 300px;
+    text-align: center;
+  }
+  .glitch {
+    animation: glitchAnimation 1s infinite;
+  }
+  @keyframes glitchAnimation {
+    0%, 100% { text-shadow: 2px 2px red, -2px -2px blue; }
+    50% { text-shadow: -2px -2px red, 2px 2px blue; }
+  }
+  @keyframes shake {
+    0% { transform: translate(0,0); }
+    20% { transform: translate(-5px,5px); }
+    40% { transform: translate(5px,-5px); }
+    60% { transform: translate(-5px,-5px); }
+    80% { transform: translate(5px,5px); }
+    100% { transform: translate(0,0); }
+  }
+  .shake {
+    animation: shake 0.5s;
+  }
+
+  /* Loading bar styles */
+  #loadingScreen {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: #000;
+    color: #0f0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: monospace;
+    font-size: 1.4rem;
+    z-index: 9999;
+  }
+  #loadingBarContainer {
+    width: 300px;
+    height: 25px;
+    background: #222;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-top: 20px;
+    box-shadow: 0 0 5px #0f0;
+  }
+  #loadingBar {
+    width: 0%;
+    height: 100%;
+    background: #0f0;
+    transition: width 0.3s ease;
+  }
+  /* Error Modal */
+#errorModal {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+#errorWindow {
+  width: 300px;
+  background: #222;
+  color: #eee;
+  border: 2px solid #f00;
+  border-radius: 8px;
+  box-shadow: 0 0 20px red;
+  font-family: monospace;
+}
+#errorHeader {
+  padding: 10px;
+  background: #400;
+  cursor: move;
+  font-weight: bold;
+}
+#errorBody {
+  padding: 15px;
+}
+#errorBody button {
+  padding: 8px 20px;
+  background: #900;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-top: 10px;
+}
+.hidden {
+  display: none !important;
+}
+#unlockSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+#unlockInput {
+  padding: 10px;
+  margin-top: 10px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  width: 200px;
+  text-align: center;
+}
+#unlockBtn {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background: #333;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  border-radius: 6px;
+}
+#puzzleMessage {
+  margin-bottom: 10px;
+}
+#finaleScreen {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: #000;
+  color: #0f0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: monospace;
+  z-index: 10000;
+}
+
+#finaleBarContainer {
+  width: 300px;
+  height: 25px;
+  background: #222;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-top: 20px;
+  box-shadow: 0 0 10px #0f0;
+}
+
+#finaleBar {
+  width: 0%;
+  height: 100%;
+  background: #0f0;
+  transition: width 0.4s ease;
+}
+
+#theEnd {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: black;
+  color: white;
+  font-size: 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 10001;
+  font-family: monospace;
+}
+/* Tablet & Desktop Styles */
+@media (min-width: 768px) {
+  body {
+    padding: 20px;
+  }
+  #btnContainer {
+    gap: 30px;
+  }
+  button {
+    padding: 20px 40px;
+    font-size: 1.3rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  h1 {
+    font-size: 4rem;
+  }
+  #messageBox {
+    font-size: 1.8rem;
+    min-width: 500px;
+  }
+}
+
+</style>
+</head>
+<body>
+
+<h1>There Is No Game</h1>
+<div id="subtitle">Click buttons if you want, but there’s nothing here.</div>
+
+<div id="btnContainer">
+  <button id="btnStart">Start Game</button>
+  <button id="btnSecret">Secret Button</button>
+  <button id="btnPuzzle">Click Me</button>
+</div>
+
+<div id="messageBox"></div>
+<!-- Fake Error Modal -->
+<div id="errorModal" class="hidden">
+  <div id="errorWindow">
+    <div id="errorHeader">⚠ Error #404 - Game Crash</div>
+    <div id="errorBody">
+      <p>The game has crashed! Just kidding... or maybe not.</p>
+      <button id="closeError">Close</button>
+    </div>
+  </div>
+</div>
+<div id="unlockSection" style="margin-top: 60px;">
+  <div id="puzzleMessage">🔒 This section is locked. Enter the secret word:</div>
+  <input type="text" id="unlockInput" placeholder="Type here..." />
+  <button id="unlockBtn">Unlock</button>
+</div>
+<div id="finaleScreen" class="hidden">
+  <h2>🎮 The Real Game is Loading...</h2>
+  <div id="finaleBarContainer">
+    <div id="finaleBar"></div>
+  </div>
+</div>
+
+<div id="theEnd" class="hidden">
+  <h1>THE END</h1>
+  <p>There. Was. No. Game.</p>
+</div>
+
+<!-- Loading Screen (hidden initially) -->
+<div id="loadingScreen" style="display:none;">
+  <div>Loading... Please wait</div>
+  <div id="loadingBarContainer">
+    <div id="loadingBar"></div>
+  </div>
+</div>
+
+<script>
+    function speak(text, rate = 1, pitch = 1, voiceName = null) {
+  const msg = new SpeechSynthesisUtterance(text);
+  msg.rate = rate;
+  msg.pitch = pitch;
+  if (voiceName) {
+    const voice = speechSynthesis.getVoices().find(v => v.name.includes(voiceName));
+    if (voice) msg.voice = voice;
+  }
+  speechSynthesis.speak(msg);
+}
+
+  const beep = new Audio('https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg');
+
+  let gameStarted = false;
+
+  const btnStart = document.getElementById('btnStart');
+  const btnSecret = document.getElementById('btnSecret');
+  const messageBox = document.getElementById('messageBox');
+
+  const loadingScreen = document.getElementById('loadingScreen');
+  const loadingBar = document.getElementById('loadingBar');
+
+  function showMessage(text, glitch = false) {
+    messageBox.textContent = text;
+    if (glitch) {
+      messageBox.classList.add('glitch');
+    } else {
+      messageBox.classList.remove('glitch');
+    }
+  }
+
+  function shakeScreen() {
+    document.body.classList.add('shake');
+    setTimeout(() => {
+      document.body.classList.remove('shake');
+    }, 500);
+  }
+
+  // Fake loading function
+  function fakeLoading(onComplete) {
+    loadingScreen.style.display = 'flex';
+    loadingBar.style.width = '0%';
+    let progress = 0;
+
+    const interval = setInterval(() => {
+      progress += Math.random() * 15 + 5; // random progress steps
+      if (progress >= 100) progress = 100;
+
+      loadingBar.style.width = progress + '%';
+
+      if (progress === 100) {
+        clearInterval(interval);
+        setTimeout(() => {
+          loadingScreen.style.display = 'none';
+          onComplete();
+        }, 500);
+      }
+    }, 400);
+  }
+
+  btnStart.addEventListener('click', () => {
+  beep.play();
+  shakeScreen();
+
+  if (!gameStarted) {
+    speak("No game detected. Please go away.");
+    showMessage("");
+    fakeLoading(() => {
+      showMessage("...You thought there would be a game? Nope.", true);
+      btnStart.textContent = "Keep Trying";
+      gameStarted = true;
+    });
+  } else {
+    speak("Still no game. This is getting awkward.");
+    showMessage("Still no game. Try something else.", true);
+  }
+});
+
+
+  btnSecret.addEventListener('click', () => {
+    beep.play();
+    shakeScreen();
+
+    if (!gameStarted) {
+      showMessage("Nope, the secret is... no secret!", true);
+    } else {
+      showMessage("Alright, you found the secret! But there's still no game!", false);
+    }
+  });
+  const btnPuzzle = document.getElementById('btnPuzzle');
+let dodgeCount = 0;
+let maxDodges = 5;
+
+btnPuzzle.addEventListener('mouseover', () => {
+  if (dodgeCount < maxDodges) {
+    const x = Math.random() * (window.innerWidth - btnPuzzle.offsetWidth);
+    const y = Math.random() * (window.innerHeight - btnPuzzle.offsetHeight);
+
+    btnPuzzle.style.position = 'absolute';
+    btnPuzzle.style.left = `${x}px`;
+    btnPuzzle.style.top = `${y}px`;
+    dodgeCount++;
+
+    showMessage(`Nice try! (${dodgeCount}/${maxDodges})`, true);
+    beep.play();
+    shakeScreen();
+  } else {
+    btnPuzzle.textContent = "Fine. Click me.";
+    btnPuzzle.style.position = 'static'; // stop running
+  }
+});
+
+btnPuzzle.addEventListener('click', () => {
+  if (dodgeCount >= maxDodges) {
+    showMessage("You broke the button! But… still no game!", true);
+    beep.play();
+    shakeScreen();
+    btnPuzzle.disabled = true;
+  }
+});
+const errorModal = document.getElementById('errorModal');
+const closeError = document.getElementById('closeError');
+
+// Show error after 10 seconds as a prank
+setTimeout(() => {
+  errorModal.classList.remove('hidden');
+  beep.play();
+  shakeScreen();
+}, 10000);
+
+// Close error
+closeError.addEventListener('click', () => {
+  errorModal.classList.add('hidden');
+  showMessage("Crisis averted. But still no game.", true);
+});
+// Make error window draggable
+dragElement(document.getElementById("errorWindow"));
+
+function dragElement(el) {
+  let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+  const header = document.getElementById("errorHeader");
+
+  header.onmousedown = dragMouseDown;
+
+  function dragMouseDown(e) {
+    e = e || window.event;
+    e.preventDefault();
+    // Get initial mouse position
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    document.onmouseup = closeDragElement;
+    document.onmousemove = elementDrag;
+  }
+
+  function elementDrag(e) {
+    e = e || window.event;
+    e.preventDefault();
+    // Calculate new cursor position
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    // Set new position
+    el.style.top = (el.offsetTop - pos2) + "px";
+    el.style.left = (el.offsetLeft - pos1) + "px";
+    el.style.position = "absolute";
+  }
+
+  function closeDragElement() {
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
+}
+const unlockInput = document.getElementById('unlockInput');
+const unlockBtn = document.getElementById('unlockBtn');
+const puzzleMessage = document.getElementById('puzzleMessage');
+
+unlockBtn.addEventListener('click', checkUnlock);
+
+function checkUnlock() {
+  const word = unlockInput.value.trim().toUpperCase();
+
+  if (word === "UNLOCK") {
+  showMessage("Wait... how did you actually solve it?! 😨", true);
+  speak("You. Actually. Solved it. Uh oh.");
+  puzzleMessage.textContent = "✅ Access granted. But... still no game.";
+  unlockInput.disabled = true;
+  unlockBtn.disabled = true;
+  beep.play();
+  shakeScreen();
+  setTimeout(() => {
+  speak("Fine. You win. Starting the real game now...");
+  showFinale();
+}, 2000);
+
+}
+ else if (word === "") {
+    showMessage("Try typing something.", false);
+  } else {
+    showMessage("Nope. That’s not it. Try harder.", true);
+    shakeScreen();
+    beep.play();
+  }
+}
+function showFinale() {
+  const finaleScreen = document.getElementById('finaleScreen');
+  const finaleBar = document.getElementById('finaleBar');
+  const theEnd = document.getElementById('theEnd');
+
+  finaleScreen.classList.remove('hidden');
+
+  let progress = 0;
+  const interval = setInterval(() => {
+    progress += Math.random() * 15;
+    if (progress >= 100) progress = 100;
+    finaleBar.style.width = progress + '%';
+
+    if (progress === 100) {
+      clearInterval(interval);
+      speak("Just kidding. There. Is. Still. No. Game.");
+      finaleScreen.classList.add('hidden');
+      theEnd.classList.remove('hidden');
+    }
+  }, 400);
+}
+
+</script>
+
+</body>
+</html>
