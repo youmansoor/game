@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>404: ERROR – Glitch World</title>
+  <style>
+    @keyframes glitch1 {
+      0% { clip: rect(10px, 9999px, 70px, 0); transform: translate(-2px, -2px); }
+      20% { clip: rect(80px, 9999px, 130px, 0); transform: translate(2px, 2px); }
+      40% { clip: rect(10px, 9999px, 70px, 0); transform: translate(-2px, 2px); }
+      60% { clip: rect(80px, 9999px, 130px, 0); transform: translate(2px, -2px); }
+      80% { clip: rect(10px, 9999px, 70px, 0); transform: translate(-2px, -2px); }
+      100% { clip: rect(80px, 9999px, 130px, 0); transform: translate(2px, 2px); }
+    }
+    @keyframes flicker {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    body {
+      margin: 0;
+      background: black;
+      color: lime;
+      font-family: monospace;
+      overflow: hidden;
+      user-select: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+      position: relative;
+    }
+    #glitchText {
+      font-size: 4rem;
+      font-weight: bold;
+      position: relative;
+      animation: glitch1 1.5s infinite;
+      color: lime;
+      text-transform: uppercase;
+    }
+    #glitchText::before, #glitchText::after {
+      content: attr(data-text);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      overflow: hidden;
+      color: lime;
+      mix-blend-mode: screen;
+    }
+    #glitchText::before {
+      left: 2px;
+      text-shadow: -2px 0 red;
+      animation: glitch1 1.2s infinite;
+      clip: rect(44px, 450px, 56px, 0);
+    }
+    #glitchText::after {
+      left: -2px;
+      text-shadow: -2px 0 blue;
+      animation: glitch1 1.8s infinite;
+      clip: rect(85px, 450px, 96px, 0);
+    }
+
+    #lettersContainer {
+      margin-top: 40px;
+      display: flex;
+      gap: 25px;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 600px;
+    }
+
+    .glitchLetter {
+      font-size: 3rem;
+      cursor: pointer;
+      user-select: none;
+      color: lime;
+      text-transform: uppercase;
+      transition: color 0.3s ease;
+      animation: flicker 2s infinite;
+      border: 2px solid lime;
+      padding: 10px 15px;
+      border-radius: 8px;
+      background: rgba(0, 255, 0, 0.1);
+      box-shadow: 0 0 10px lime;
+      user-select: none;
+      position: relative;
+    }
+    .glitchLetter:hover {
+      color: #ff0;
+      box-shadow: 0 0 15px yellow;
+      animation-play-state: paused;
+    }
+    .glitchLetter.clicked {
+      color: #0f0;
+      background: rgba(0, 255, 0, 0.6);
+      box-shadow: 0 0 20px #0f0;
+      cursor: default;
+      animation-play-state: paused;
+      pointer-events: none;
+      text-decoration: line-through;
+    }
+
+    #finalMessage {
+      margin-top: 50px;
+      font-size: 2.5rem;
+      color: lime;
+      text-align: center;
+      display: none;
+      animation: flicker 1.5s infinite;
+    }
+  </style>
+</head>
+<body>
+  <div id="glitchText" data-text="404: ERROR">404: ERROR</div>
+  <div id="hint" style="opacity: 0; font-size: 1.2rem; color: lime; margin-top: 10px; user-select: none; animation: flicker 2s infinite;">
+  Click the letters in the correct order to END THE GAME
+</div>
+
+  <div id="lettersContainer">
+    <!-- Letters scattered in random order -->
+    <div class="glitchLetter" data-letter="E">E</div>
+    <div class="glitchLetter" data-letter="N">N</div>
+    <div class="glitchLetter" data-letter="G">G</div>
+    <div class="glitchLetter" data-letter="M">M</div>
+    <div class="glitchLetter" data-letter="A">A</div>
+    <div class="glitchLetter" data-letter="E2">E</div> <!-- Second E for END GAME -->
+    <div class="glitchLetter" data-letter="D">D</div>
+  </div>
+
+  <div id="finalMessage">🎉 Congratulations! You finished the “There Is No Game” experience! 🎉</div>
+
+  <script>
+    const lettersContainer = document.getElementById('lettersContainer');
+    const finalMessage = document.getElementById('finalMessage');
+
+    // The phrase player needs to form:
+    // We use a custom array to define order including repeated letters:
+    // 'E' (1st), 'N', 'D', 'G', 'A', 'M', 'E' (2nd)
+    const correctOrder = ['E', 'N', 'D', 'G', 'A', 'M', 'E2'];
+    let currentIndex = 0;
+
+    // Shuffle the letters visually on page load:
+    (function shuffleLetters() {
+      for (let i = lettersContainer.children.length; i >= 0; i--) {
+        lettersContainer.appendChild(lettersContainer.children[Math.random() * i | 0]);
+      }
+    })();
+
+    lettersContainer.addEventListener('click', (e) => {
+      const target = e.target;
+      if (!target.classList.contains('glitchLetter')) return;
+
+      const letter = target.dataset.letter;
+      if (letter === correctOrder[currentIndex]) {
+        target.classList.add('clicked');
+        currentIndex++;
+        if (currentIndex === correctOrder.length) {
+          showFinalMessage();
+        }
+      } else {
+        // Wrong letter clicked — flash red
+        target.style.color = 'red';
+        setTimeout(() => {
+          target.style.color = 'lime';
+        }, 500);
+      }
+    });
+
+    function showFinalMessage() {
+      finalMessage.style.display = 'block';
+      // Optional: Add speech synthesis final congratulation
+      if ('speechSynthesis' in window) {
+        const msg = new SpeechSynthesisUtterance("Congratulations! You finished the There Is No Game experience!");
+        msg.rate = 1;
+        msg.pitch = 1;
+        window.speechSynthesis.speak(msg);
+      }
+    }
+    const hint = document.getElementById('hint');
+
+// Show hint after 5 seconds with a fade-in effect
+setTimeout(() => {
+  hint.style.transition = 'opacity 1.5s ease';
+  hint.style.opacity = 1;
+}, 5000);
+
+  </script>
+</body>
+</html>

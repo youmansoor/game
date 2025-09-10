@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>404: ERROR – Terminal</title>
+  <style>
+    body {
+      margin: 0;
+      background: #000;
+      color: #0f0;
+      font-family: monospace;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+    }
+    #terminal {
+      width: 90%;
+      max-width: 800px;
+      height: 80%;
+      border: 2px solid #0f0;
+      padding: 10px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    #output {
+      flex: 1;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+    #input-line {
+      display: flex;
+    }
+    #prompt {
+      margin-right: 5px;
+    }
+    #cmdline {
+      background: transparent;
+      border: none;
+      color: #0f0;
+      outline: none;
+      flex: 1;
+      font-family: monospace;
+      font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div id="terminal">
+    <div id="output">Welcome to the Terminal. Type something…</div>
+    <div id="input-line">
+      <span id="prompt">C:\\></span>
+      <input type="text" id="cmdline" autofocus autocomplete="off" />
+    </div>
+  </div>
+
+  <script>
+    const cmdline = document.getElementById('cmdline');
+    const output = document.getElementById('output');
+    const synth = window.speechSynthesis;
+
+    function speak(text) {
+      const msg = new SpeechSynthesisUtterance(text);
+      msg.rate = 1;
+      msg.pitch = 1;
+      synth.speak(msg);
+    }
+
+    function appendOutput(text) {
+      output.textContent += '\n' + text;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    cmdline.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        const cmd = cmdline.value.trim();
+        appendOutput(`C:\\> ${cmd}`);
+        cmdline.value = '';
+
+        if (!cmd) {
+          appendOutput('You typed nothing. Bold move.');
+          speak('Try something. Or don’t.');
+        } else if (cmd.toLowerCase() === 'there is no game') {
+          appendOutput('…loading next phase…');
+          speak('You know the words! Proceeding...');
+          setTimeout(() => {
+            window.location.href = 'scene4.html';
+          }, 2000);
+        } else {
+          appendOutput(`Unrecognized command: ${cmd}`);
+          speak(`Command ${cmd}? Nope.`);
+        }
+      }
+    });
+    let hintGiven = false;
+
+function giveHint() {
+  if (!hintGiven) {
+    appendOutput('\nHint: Sometimes the truth is hidden in plain sight...');
+    speak('Try typing "there is no game" to proceed.');
+    hintGiven = true;
+  }
+}
+
+// Set a timeout for 7 seconds after page load
+setTimeout(giveHint, 7000);
+
+// Optional: reset the hint timer on user input, so hint only shows if idle
+cmdline.addEventListener('keydown', () => {
+  if (!hintGiven) {
+    clearTimeout(hintTimer);
+  }
+});
+  </script>
+</body>
+</html>
